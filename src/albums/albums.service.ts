@@ -1,31 +1,23 @@
 import { Injectable } from '@nestjs/common';
-import { Album } from './album.model';
-import { ALBUMS } from './albums.mock';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { AlbumDTO } from './dto/album.dto';
+import { Album, AlbumDocument } from './schemas/album.schema';
 
 @Injectable()
 export class AlbumsService {
-    private albums = ALBUMS;
+    constructor(@InjectModel(Album.name) private albumModel: Model<AlbumDocument>) { }
 
     public getAlbums(): Promise<Album[]> {
-        return new Promise(resolve => {
-            resolve(this.albums);
-        });
+        return this.albumModel.find().exec();
     }
 
-    public addAlbum(album: Album): Promise<Album[]> {
-        return new Promise(resolve => {
-            if (album.id === undefined) {
-                album.id = String(Date.now());
-            }
-            this.albums.push(album);
-            resolve(this.albums);
-        });
+    public async addAlbum(albumDTO: AlbumDTO): Promise<Album> {
+        const addedAlbum = new this.albumModel(albumDTO);
+        return addedAlbum.save();
     }
 
-    public removeAlbum(idToRemove: string): Promise<Album[]> {
-        return new Promise(resolve => {
-            this.albums = this.albums.filter(el => el.id !== idToRemove);
-            resolve(this.albums);
-        });
+    public removeAlbum(id: string): Promise<Album> {
+        return this.albumModel.findByIdAndRemove(id).exec();
     }
 }

@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, Post, Query } from '@nestjs/common';
-import { Album } from './album.model';
+import { AlbumDTO } from './dto/album.dto';
 import { AlbumsService } from './albums.service';
+import { Album } from './schemas/album.schema';
 
 @Controller('albums')
 export class AlbumsController {
@@ -13,14 +14,14 @@ export class AlbumsController {
     }
 
     @Post()
-    async addAlbum(@Body() album: Album): Promise<Album[]> {
-        const albums = await this.albumsService.addAlbum(album);
-        return albums;
+    async addAlbum(@Body() album: AlbumDTO): Promise<Album> {
+        const addedAlbum = await this.albumsService.addAlbum(album);
+        return addedAlbum;
     }
 
     @Delete()
-    async removeAlbum(@Query() query): Promise<Album[]> {
-        const albums = await this.albumsService.removeAlbum(query.albumId);
-        return albums;
+    async removeAlbum(@Query() query): Promise<Album> {
+        const album = await this.albumsService.removeAlbum(query.albumId);
+        return album;
     }
 }
