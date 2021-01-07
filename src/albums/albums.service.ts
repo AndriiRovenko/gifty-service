@@ -22,6 +22,16 @@ export class AlbumsService {
     }
 
     public findAlbum(query: string): Promise<Album[]> {
-        return this.albumModel.find({ name: query }).exec();
+        if (query.length === 0) {
+            return Promise.resolve([] as Album[]);
+        }
+        return this.albumModel.find(
+            { $or: [
+                {"name" : { $regex : new RegExp(query, "i") }},
+                {"artist" : { $regex : new RegExp(query, "i") }}
+            ]}
+        ).exec();
+        // return this.albumModel.find( { "name" : { $regex : new RegExp(query, "i") } } ).exec();
+        // return this.albumModel.find({ name: query }).exec();
     }
 }
