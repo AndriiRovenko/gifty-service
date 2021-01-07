@@ -7,6 +7,12 @@ import { Album } from './schemas/album.schema';
 export class AlbumsController {
     constructor(private readonly albumsService: AlbumsService) {}
 
+    @Get('/search')
+    async findAlbum(@Query('searchExp') searchExp): Promise<Album[]> {
+        const albums = await this.albumsService.findAlbum(searchExp);
+        return albums;
+    }
+
     @Get()
     async getAlbums(): Promise<Album[]> {
         const albums = await this.albumsService.getAlbums();
@@ -20,8 +26,8 @@ export class AlbumsController {
     }
 
     @Delete()
-    async removeAlbum(@Query() query): Promise<Album> {
-        const album = await this.albumsService.removeAlbum(query.albumId);
+    async removeAlbum(@Query('albumId') albumId): Promise<Album> {
+        const album = await this.albumsService.removeAlbum(albumId);
         return album;
     }
 }

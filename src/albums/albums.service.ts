@@ -20,4 +20,8 @@ export class AlbumsService {
     public removeAlbum(id: string): Promise<Album> {
         return this.albumModel.findByIdAndRemove(id).exec();
     }
+
+    public findAlbum(query: string): Promise<Album[]> {
+        return this.albumModel.find({ name: query }).exec();
+    }
 }
